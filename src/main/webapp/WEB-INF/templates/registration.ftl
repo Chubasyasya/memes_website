@@ -5,6 +5,9 @@
 </#macro>
 
 <#macro content>
+    <a href="${contextPath}/login" class="btn">Логин</a>
+    <a href="${contextPath}/home" class="btn">Главная страница</a>
+
     <form method="post">
         <label for="name">Введите имя</label>
         <input type="text" name="name" id="name">

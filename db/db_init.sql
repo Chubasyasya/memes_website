@@ -33,10 +33,14 @@ create table account(
     constraint account_id_pk primary key (id)
 );
 
+create table account_identifier(
+    id bigserial primary key,
+    account_id bigint,
+    identifier varchar(255)
+);
+
 create sequence publication_sequence
-    start with 1000
-    increment 1
-    cache 50;
+    start with 1;
 
 create table publication(
     id bigint not null default nextval('publication_sequence'),
@@ -107,6 +111,7 @@ create sequence comment_sequence
 create table comment(
     id bigint not null default nextval('comment_sequence'),
     content text not null,
+    date date,
     likes_amount int,
     dislikes_amount int,
     publication_id bigint not null,

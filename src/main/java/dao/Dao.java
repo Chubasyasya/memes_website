@@ -1,11 +1,13 @@
 package dao;
 
 import mapper.RowMapper;
+import util.StatementBuilder;
 
 public abstract class Dao <T>{
     protected RowMapper mapper;
-    public abstract T save(T t);
+    protected StatementBuilder statementBuilder = new StatementBuilder();
+    public abstract void save(T t);
     public abstract T find(long e);
-    public abstract boolean update(T t);
-    public abstract int delete(long e);
+    public abstract void update(T t);
+    public abstract void delete(long e);
 }

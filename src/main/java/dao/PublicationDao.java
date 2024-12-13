@@ -14,12 +14,26 @@ public class PublicationDao extends Dao<Publication> {
             insert into publication (date, content, comments_amount, likes_amount, account_id)
             values(?, ?, ?, ?, ?);
             """;
-    //language = sql
+
     private final String FIND_BY_ACCOUNT_ID = """
         select *
         from publication
-        where account_id = ?;
+        where account_id = ?
+        order by date;
         """;
+    private final String FIND_ALL_SQL = """
+            select *
+            from publication
+            order by date
+            offset ?
+            limit ?;
+            """;
+    private final String UPDATE_LIKES_SQL = """
+            update publication
+            set likes_amount = likes_amount+1
+            where id = ?;
+            """;
+
 
     private PublicationDao() {
         mapper = new PublicationRowMapper();
@@ -35,8 +49,7 @@ public class PublicationDao extends Dao<Publication> {
         }
         return INSTANCE;
     }
-    @Override
-    public Publication save(Publication publication) {
+    public long saveAndGetId(Publication publication) {
         try (Connection connection = ConnectionManager.get();
              PreparedStatement statement = connection.prepareStatement(SAVE_SQL, Statement.RETURN_GENERATED_KEYS)) {
             statement.setDate(1, Date.valueOf(publication.date()));
@@ -46,20 +59,21 @@ public class PublicationDao extends Dao<Publication> {
             statement.setLong(5, publication.accountId());
 
             statement.executeUpdate();
-            ResultSet generatedKeys = statement.getGeneratedKeys();
-            if (generatedKeys.next()) {
-                long generatedId = generatedKeys.getLong(1);
-                return new Publication(generatedId,
-                        publication.date(),
-                        publication.content(),
-                        publication.commentsAmount(),
-                        publication.likesAmount(),
-                        publication.accountId(), null);
+            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    return generatedKeys.getLong(1);
+                }else {
+                    throw new RuntimeException("Can't take generated ID.");
+                }
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return null;
+    }
+
+    @Override
+    public void save(Publication publication) {
+
     }
 
     @Override
@@ -68,18 +82,26 @@ public class PublicationDao extends Dao<Publication> {
     }
 
     @Override
-    public boolean update(Publication publication) {
-        return false;
+    public void update(Publication publication) {
+    }
+    public void updateLikes(long id) {
+        try (Connection connection = ConnectionManager.get();
+             PreparedStatement statement = connection.prepareStatement(UPDATE_LIKES_SQL)) {
+            statement.setLong(1, id);
+
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    @Override
-    public int delete(long e) {
-        return 0;
+        @Override
+    public void delete(long e) {
     }
 
     public List<Publication> findByAccountId(long accountId){
         try (Connection connection = ConnectionManager.get();
-             PreparedStatement statement = connection.prepareStatement(SAVE_SQL, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement statement = connection.prepareStatement(FIND_BY_ACCOUNT_ID, Statement.RETURN_GENERATED_KEYS)) {
             statement.setLong(1, accountId);
 
             List<Publication> publications = new ArrayList<>();
@@ -93,4 +115,24 @@ public class PublicationDao extends Dao<Publication> {
             throw new RuntimeException(e);
         }
     }
+
+    public List<Publication> find(int offset, int limit) {
+        try(Connection connection = ConnectionManager.get();
+        PreparedStatement statement = connection.prepareStatement(FIND_ALL_SQL)) {
+            statement.setInt(1, offset);
+            statement.setInt(2, limit);
+
+            List<Publication> publications = new ArrayList<>();
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()){
+                publications.add((Publication) mapper.mapRow(resultSet));
+            }
+
+            return publications;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
 }

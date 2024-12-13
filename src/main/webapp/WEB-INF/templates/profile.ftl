@@ -1,11 +1,11 @@
 <#include "base.ftl"/>
+<#import "post.ftl" as postMacro>
 
 <#macro title>
     Профиль
 </#macro>
 
 <#macro content>
-    <p>Профиль</p>
 
     <button id="createPostBtn">Создать публикацию</button>
 
@@ -13,10 +13,15 @@
         <label for="postText">Текст публикации</label>
         <textarea type="text" name="postText" id="postText" placeholder="Введите текст"></textarea>
         <input type="file" name="postImage" id="postImage" multiple>
-        <button type="submit">Опубликовать</button>
+        <input type="submit" value="Опубликовать">
     </form>
 
-    <script src="${contextPath}/js/profile.js"></script>
+
+    <div id="feed"></div>
+    <button id="loadMore">Load More</button>
+
+    <script src="${contextPath}/static/js/loadPublications.js"></script>
+    <script src="${contextPath}/static/js/profile.js"></script>
 </#macro>
 
 <@page/>
