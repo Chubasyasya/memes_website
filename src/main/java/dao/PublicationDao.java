@@ -1,6 +1,7 @@
 package dao;
 
 import entity.Publication;
+import enums.SortType;
 import mapper.PublicationRowMapper;
 import util.ConnectionManager;
 
@@ -10,6 +11,12 @@ import java.util.List;
 
 public class PublicationDao extends Dao<Publication> {
     private volatile static PublicationDao INSTANCE;
+    //language=sql
+    private static final String FIND_SQL = """
+        select *
+        from publication
+        where id = ?;
+    """;
     private final String SAVE_SQL = """
             insert into publication (date, content, comments_amount, likes_amount, account_id)
             values(?, ?, ?, ?, ?);
@@ -19,21 +26,33 @@ public class PublicationDao extends Dao<Publication> {
         select *
         from publication
         where account_id = ?
-        order by date;
+        order by date desc
+        offset ?
+        limit ?;
         """;
     private final String FIND_ALL_SQL = """
             select *
             from publication
-            order by date
+            order by %s %s
             offset ?
             limit ?;
             """;
-    private final String UPDATE_LIKES_SQL = """
+    private final String ADD_LIKE_SQL = """
             update publication
             set likes_amount = likes_amount+1
             where id = ?;
             """;
-
+    private static final String DELETE_LIKE_SQL = """
+            update publication
+           set likes_amount = likes_amount-1
+            where id = ?;
+            """;
+    private static final String GET_RANDOM_SQL = """
+                SELECT * 
+                FROM publication
+                ORDER BY RANDOM() 
+                LIMIT 1;
+            """;
 
     private PublicationDao() {
         mapper = new PublicationRowMapper();
@@ -52,11 +71,11 @@ public class PublicationDao extends Dao<Publication> {
     public long saveAndGetId(Publication publication) {
         try (Connection connection = ConnectionManager.get();
              PreparedStatement statement = connection.prepareStatement(SAVE_SQL, Statement.RETURN_GENERATED_KEYS)) {
-            statement.setDate(1, Date.valueOf(publication.date()));
-            statement.setString(2, publication.content());
-            statement.setInt(3, publication.commentsAmount());
-            statement.setInt(4, publication.likesAmount());
-            statement.setLong(5, publication.accountId());
+            statement.setDate(1, Date.valueOf(publication.getDate()));
+            statement.setString(2, publication.getContent());
+            statement.setInt(3, publication.getCommentsAmount());
+            statement.setInt(4, publication.getLikesAmount());
+            statement.setLong(5, publication.getAccountId());
 
             statement.executeUpdate();
             try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
@@ -77,16 +96,38 @@ public class PublicationDao extends Dao<Publication> {
     }
 
     @Override
-    public Publication find(long e) {
+    public Publication find(long id) {
+        try(Connection connection = ConnectionManager.get();
+            PreparedStatement statement = connection.prepareStatement(FIND_SQL)) {
+            statement.setLong(1, id);
+
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()){
+                return (Publication) mapper.mapRow(resultSet);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         return null;
     }
 
     @Override
     public void update(Publication publication) {
     }
-    public void updateLikes(long id) {
+    public void addLike(long id) {
         try (Connection connection = ConnectionManager.get();
-             PreparedStatement statement = connection.prepareStatement(UPDATE_LIKES_SQL)) {
+             PreparedStatement statement = connection.prepareStatement(ADD_LIKE_SQL)) {
+            statement.setLong(1, id);
+
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void deleteLike(long id) {
+        try (Connection connection = ConnectionManager.get();
+             PreparedStatement statement = connection.prepareStatement(DELETE_LIKE_SQL)) {
             statement.setLong(1, id);
 
             statement.executeUpdate();
@@ -99,10 +140,12 @@ public class PublicationDao extends Dao<Publication> {
     public void delete(long e) {
     }
 
-    public List<Publication> findByAccountId(long accountId){
+    public List<Publication> findByAccountId(long accountId, int offset, int limit){
         try (Connection connection = ConnectionManager.get();
              PreparedStatement statement = connection.prepareStatement(FIND_BY_ACCOUNT_ID, Statement.RETURN_GENERATED_KEYS)) {
             statement.setLong(1, accountId);
+            statement.setInt(2, offset);
+            statement.setInt(3, limit);
 
             List<Publication> publications = new ArrayList<>();
             ResultSet resultSet = statement.executeQuery();
@@ -116,9 +159,11 @@ public class PublicationDao extends Dao<Publication> {
         }
     }
 
-    public List<Publication> find(int offset, int limit) {
+    public List<Publication> findAll(int offset, int limit, SortType sortType) {
+        String findSql = FIND_ALL_SQL.formatted(sortType.getField(), sortType.getDirection());
+
         try(Connection connection = ConnectionManager.get();
-        PreparedStatement statement = connection.prepareStatement(FIND_ALL_SQL)) {
+        PreparedStatement statement = connection.prepareStatement(findSql)) {
             statement.setInt(1, offset);
             statement.setInt(2, limit);
 
@@ -134,5 +179,17 @@ public class PublicationDao extends Dao<Publication> {
         }
     }
 
+    public Publication getRandom() {
+        try(Connection connection = ConnectionManager.get();
+            Statement statement = connection.createStatement()) {
+            ResultSet resultSet = statement.executeQuery(GET_RANDOM_SQL);
 
+            if(resultSet.next()){
+                return (Publication) mapper.mapRow(resultSet);
+            }
+            return null;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

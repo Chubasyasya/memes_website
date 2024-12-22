@@ -1,0 +1,58 @@
+.stylish-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: #dc185b;
+}
+
+.logo-link {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #fff;
+    text-decoration: none;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+    transition: color 0.3s ease;
+}
+
+.logo-link:hover {
+    color: #fce4ec;
+}
+
+.auth-links {
+    display: flex;
+    gap: 15px;
+    margin-left: auto;
+    padding-left: 20px;
+}
+
+.auth-button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    color:#dc185b;
+    background-color: #fff;
+    border-radius: 20px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.auth-button:hover {
+    background-color: #dc185b;
+    color: #fff;
+    border-color: #dc185b;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+}
+
+.login-button {
+    border-color: #f06292;
+}
+
+.register-button {
+    border-color: #dc185b;
+}
+
+.register-button:hover {
+    background-color: #e91e63;
+}

@@ -15,19 +15,19 @@ public class CreateUserValidator implements Validator<Account>{
     public  ValidationResult isValid(Account account){
         ValidationResult validationResult = new ValidationResult();
 
-        if(account.name()==null){
+        if(account.getName()==null){
             validationResult.add(Error.of("invalid.name", "name is invalid"));
         }
-        if(account.password()==null){
+        if(account.getPassword()==null){
             validationResult.add(Error.of("invalid.password", "password is invalid"));
         }
-        if(!Pattern.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", account.email())){
+        if(!Pattern.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", account.getEmail())){
             validationResult.add(Error.of("invalid.email", "email is invalid"));
         }
-        if(accountDao.emailExist(account.email())){
+        if(accountDao.emailExist(account.getEmail())){
             validationResult.add(Error.of("invalid.email", "email is exist"));
         }
-        if(accountDao.nameExist(account.name())){
+        if(accountDao.nameExist(account.getName())){
             validationResult.add(Error.of("invalid.name", "name is exist"));
         }
         return validationResult;

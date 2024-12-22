@@ -1,0 +1,34 @@
+let offset = 0;
+const limit = 10;
+
+function loadPublications() {
+    $.ajax({
+        url: "/memesWebApp/feedNext",
+        type: "GET",
+        data: { offset: offset, limit: limit, ownerId: ownerId },
+        success: function (data) {
+            if (offset === 0) {
+                $("#feed").empty();
+            }
+            if (data.length === 0) {
+                $("#loadMore").hide();
+            } else {
+                data.forEach(postHtml => {
+                    $("#feed").append(postHtml);
+                });
+                offset += limit;
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error loading publications:", error);
+        }
+    });
+}
+
+$("#loadMore").on("click", function () {
+    loadPublications();
+});
+
+$(document).ready(function () {
+    loadPublications();
+});

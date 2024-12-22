@@ -31,7 +31,6 @@ public class AccountRowMapper implements RowMapper<Account> {
                 resultSet.getString("phone_number"),
                 resultSet.getString("status"),
                 resultSet.getDate("birthday") != null ? resultSet.getDate("birthday").toLocalDate() : null,
-                publicationDao.findByAccountId(id),
-                folderDao.findByAccountId(id));
+                resultSet.getString("salt"));
     }
 }

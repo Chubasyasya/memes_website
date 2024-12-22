@@ -1,0 +1,41 @@
+.folders-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.folder-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+}
+
+.folder-item:hover {
+    transform: translateY(-5px);
+}
+
+.folder-image {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    transition: transform 0.3s;
+}
+
+.folder-item:hover .folder-image {
+    transform: scale(1.1);
+}
+
+.folder-name {
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    color: #333;
+}

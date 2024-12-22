@@ -21,6 +21,10 @@ public class ImageRowMapper implements RowMapper<Image>{
         return new Image(resultSet.getLong("id"),
                 resultSet.getString("path"),
                 resultSet.getString("name"),
-                resultSet.getLong("publication_id"));
+                resultSet.getString("description"),
+                resultSet.getLong("publication_id"),
+                resultSet.getDate("date_created") != null
+                        ? resultSet.getDate("date_created").toLocalDate()
+                        : null);
     }
 }

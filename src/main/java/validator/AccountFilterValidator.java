@@ -1,8 +1,7 @@
 package validator;
 
 import dao.AccountDao;
-import entity.Account;
-import filter.AccountFilter;
+import entity.filter.AccountFilter;
 
 import java.util.regex.Pattern;
 

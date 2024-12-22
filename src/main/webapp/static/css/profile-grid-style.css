@@ -1,0 +1,17 @@
+.grid-container {
+    display: grid;
+    grid-template-columns: 1fr minmax(600px, 800px) 1fr;
+    gap: 16px;
+    padding: 0;
+}
+
+.center-column {
+    background-color: #fff;
+    padding: 16px;
+    text-align: center;
+}
+
+.left-column,
+.right-column {
+    background-color: transparent;
+}

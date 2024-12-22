@@ -1,12 +1,18 @@
-<#macro renderComment comments>
-    <button class="commentButton">Показать комментарии</button>
-    <div class="commentsSection hidden">
-        <#list comments as comment>
-            ${comment.content()}<br>
-            Likes amount: ${comment.likesAmount()}<br>
-            Dislikes amount: ${comment.dislikesAmount()}<br>
-        </#list>
+<#macro renderComment comment, currentAccountId>
+    <div class="comment-header">
+        <span class="comment-date">${comment.creatorName}</span>
+        <span class="comment-date">${comment.date}</span>
     </div>
-
-    <script src="${contextPath}/static/js/commentContainer.js"/>
+    <div class="comment-content">
+        ${comment.content}
+    </div>
+    <#if currentAccountId == comment.accountId>
+        <form action="${contextPath}/comment/delete" method="post" class="delete-form">
+            <input type="hidden" name="commentId" value="${comment.id}">
+            <input type="hidden" name="publicationId" value="${comment.publicationId}">
+            <button type="submit" class="delete-btn">
+                Удалить комментарий
+            </button>
+        </form>
+    </#if>
 </#macro>

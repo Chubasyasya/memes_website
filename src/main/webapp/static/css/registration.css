@@ -1,0 +1,18 @@
+.error-messages {
+    margin-top: 15px;
+    padding: 10px;
+    border: 1px solid #e74c3c;
+    background: #f8d7da;
+    border-radius: 8px;
+    color: #e74c3c;
+    font-size: 0.9rem;
+}
+
+.error-messages span {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.error-messages span:last-child {
+    margin-bottom: 0;
+}

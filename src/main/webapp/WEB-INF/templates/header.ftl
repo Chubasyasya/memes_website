@@ -1,5 +1,5 @@
-<#macro header>
-    <hr/>
-    WELCOME TO NASTYAFILMS
-    <hr/>
-</#macro>
+<div class="header">
+    <div class="logo">
+        MYMEMES
+    </div>
+</div>

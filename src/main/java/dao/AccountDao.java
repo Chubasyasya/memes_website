@@ -1,7 +1,7 @@
 package dao;
 
 import entity.Account;
-import filter.AccountFilter;
+import entity.filter.AccountFilter;
 import mapper.AccountRowMapper;
 import util.AccountSQLStringBuilder;
 import util.ConnectionManager;
@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 public class AccountDao extends Dao<Account>{
     private static final String FIND_BY_IDENTIFIER_SQL = """
-        select a.id, a.name, a.email, a.password, a.phone_number, a.status, a.birthday
+        select a.*
         from account_identifier ai
         join account a on a.id = ai.account_id
         where ai.identifier = ?;
@@ -26,14 +26,19 @@ public class AccountDao extends Dao<Account>{
         delete from account_identifier
         where identifier = ?;
     """;
+    private static final String FIND_SALT_SQL = """
+            select salt
+            from account
+            where email = ?;
+        """;
     private volatile static AccountDao INSTANCE;
     private static final String FIND_ALL_SQL = """
             select *
             from account
             """;
     private static final String SAVE_SQL = """
-            insert into account(name, email, password, phone_number, status, birthday) 
-            values (?, ?, ?, ?, ?, ?);
+            insert into account(name, email, password, phone_number, status, birthday, salt) 
+            values (?, ?, ?, ?, ?, ?, ?);
             """;
     private static final String EMAIL_EXIST_SQL = """
             select count(*)
@@ -74,16 +79,17 @@ public class AccountDao extends Dao<Account>{
     public void save(Account account) {
          try (Connection connection = ConnectionManager.get();
              PreparedStatement statement = connection.prepareStatement(SAVE_SQL)) {
-            statement.setString(1, account.name());
-            statement.setString(2, account.email());
-            statement.setString(3, account.password());
-            statement.setString(4, account.phoneNumber());
-            statement.setString(5, account.status());
-            if (account.birthday() != null) {
-                statement.setDate(6, Date.valueOf(account.birthday()));
+            statement.setString(1, account.getName());
+            statement.setString(2, account.getEmail());
+            statement.setString(3, account.getPassword());
+            statement.setString(4, account.getPhoneNumber());
+            statement.setString(5, account.getStatus());
+            if (account.getBirthday() != null) {
+                statement.setDate(6, Date.valueOf(account.getBirthday()));
             } else {
                 statement.setNull(6, java.sql.Types.DATE);
             }
+            statement.setString(7, account.getSalt());
 
             statement.executeUpdate();
         } catch (SQLException e) {
@@ -235,5 +241,20 @@ public class AccountDao extends Dao<Account>{
         } catch (SQLException ex) {
             throw new RuntimeException(ex);
         }
+    }
+
+    public String findSalt(String login) {
+        try (Connection connection = ConnectionManager.get();
+             PreparedStatement statement = connection.prepareStatement(FIND_SALT_SQL)) {
+            statement.setString(1, login);
+
+            ResultSet resultSet = statement.executeQuery();
+            if(resultSet.next()){
+                return resultSet.getString("salt");
+            }
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
+        return null;
     }
 }

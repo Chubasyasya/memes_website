@@ -1,17 +1,14 @@
 package dao;
 
 import entity.Folder;
-import jakarta.ws.rs.DELETE;
-import mapper.AccountRowMapper;
 import mapper.FolderRowMapper;
-import util.ConnectionManager;
-import util.StatementBuilder;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class FolderDao extends Dao<Folder> {
+
     private volatile static FolderDao INSTANCE;
     private final String SAVE_SQL = """
         insert into folder (name, description, image_amount, date_created, account_id)
@@ -27,7 +24,11 @@ public class FolderDao extends Dao<Folder> {
             delete from folder
             where account_id = ? and name = ?;
             """;
-
+    //language=sql
+    private static final String ADD_IMAGE_SQL = """
+                insert into image_in_folder  (image_id, folder_id) 
+                values (?, ?);
+            """;
 
     private FolderDao() {
         mapper = FolderRowMapper.getInstance();
@@ -47,11 +48,11 @@ public class FolderDao extends Dao<Folder> {
     @Override
     public void save(Folder folder) {
         try (PreparedStatement statement = statementBuilder.createStatement(SAVE_SQL)) {
-            statement.setString(1, folder.name());
-            statement.setString(2, folder.description());
-            statement.setInt(3, folder.imageAmount());
-            statement.setDate(4, Date.valueOf(folder.dateCreated()));
-            statement.setLong(5, folder.accountId());
+            statement.setString(1, folder.getName());
+            statement.setString(2, folder.getDescription());
+            statement.setInt(3, folder.getImageAmount());
+            statement.setDate(4, Date.valueOf(folder.getDateCreated()));
+            statement.setLong(5, folder.getAccountId());
 
             statement.executeUpdate();
         } catch (SQLException e) {
@@ -95,6 +96,17 @@ public class FolderDao extends Dao<Folder> {
             statement.setString(2, name);
 
             statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public boolean addImage(long folderId, long imageId) {
+        try(PreparedStatement statement = statementBuilder.createStatement(ADD_IMAGE_SQL)) {
+            statement.setLong(1, imageId);
+            statement.setLong(2, folderId);
+
+            return statement.executeUpdate()>0;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

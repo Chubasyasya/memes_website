@@ -4,16 +4,25 @@
     Folders
 </#macro>
 
-<#macro content>
-    <#list folders as folder>
-        <div>
-            <p>${folder.name()}</p>
-            <button onclick="window.location.href='${contextPath}/profile/folders/folder/${folder.id()}'">
-                Перейти
-            </button>
-        </div>
-    </#list>
+<#macro head>
+    <link rel="stylesheet" type="text/css" href="${contextPath}/static/css/folders-style.css">
+</#macro>
 
+<#macro content>
+    <div class="folders-grid">
+        <ul>
+            <#list folders as folder>
+                <div class="folder-item">
+                    <li class="folder-item" data-folder-id="${folder.id}" onclick="handleFolderClick(this)">
+                        <img src="${contextPath}/static/images/folder-icon.png" alt="Folder" class="folder-image">
+                        <span class="folder-name">${folder.name}</span>
+                    </li>
+                </div>
+            </#list>
+        </ul>
+    </div>
+
+    <script src="${contextPath}/static/js/addImageInFolder.js"></script>
 </#macro>
 
 <@page/>

@@ -21,9 +21,12 @@ public class CommentRowMapper implements RowMapper{
     public Object mapRow(ResultSet resultSet) throws SQLException {
         return new Comment(resultSet.getLong("id"),
                 resultSet.getString("content"),
+                resultSet.getDate("date").toLocalDate(),
                 resultSet.getInt("likes_amount"),
                 resultSet.getInt("dislikes_amount"),
+                resultSet.getBoolean("changed"),
                 resultSet.getLong("publication_id"),
-                resultSet.getLong("account_id"));
+                resultSet.getLong("account_id"),
+                resultSet.getString("creator_name"));
     }
 }

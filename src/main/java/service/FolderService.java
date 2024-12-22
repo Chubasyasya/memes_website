@@ -12,19 +12,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FolderService {
+    private final FolderDao folderDao = FolderDao.getInstance();
     private final ImageDao imageDao = ImageDao.getInstance();
+    public List<Folder> findByAccountId(long id) {
+        return folderDao.findByAccountId(id);
+    }
 
-    public Folder getFolderByIdAndAccount(long folderId, Account account) {
-        return account.folders().stream()
-                .filter(folder -> folder.id() == folderId)
-                .findFirst()
-                .map(folder -> {
-                    // Загружаем изображения, если их нет
-                    if (folder.images().isEmpty()) {
-                        folder.images().addAll(imageDao.findByFolderId(folder.id()));
-                    }
-                    return folder;
-                })
-                .orElse(null);
+
+    public boolean addImage(long folderId, long imageId) {
+        return folderDao.addImage(folderId, imageId);
     }
 }

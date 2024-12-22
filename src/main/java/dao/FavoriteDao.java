@@ -2,6 +2,7 @@ package dao;
 
 import com.oracle.wls.shaded.org.apache.bcel.generic.INSTANCEOF;
 import entity.Favorite;
+import jakarta.ws.rs.DELETE;
 import mapper.FavoriteRowMapper;
 import util.ConnectionManager;
 
@@ -11,6 +12,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class FavoriteDao extends Dao<Favorite> {
+    private static final String DELETE_BY_ACCOUNT_AND_PUBLICATION_ID_SQL = """
+        delete from favorite
+        where account_id = ? and publication_id = ?;
+    """;
     private volatile static FavoriteDao INSTANCE;
 
     private final String SAVE_SQL = """
@@ -41,8 +46,8 @@ public class FavoriteDao extends Dao<Favorite> {
     public void save(Favorite favorite) {
         try (Connection connection = ConnectionManager.get();
              PreparedStatement statement = connection.prepareStatement(SAVE_SQL)) {
-            statement.setLong(1, favorite.accountId());
-            statement.setLong(2, favorite.publicationId());
+            statement.setLong(1, favorite.getAccountId());
+            statement.setLong(2, favorite.getPublicationId());
 
             statement.executeUpdate();
         } catch (SQLException e) {
@@ -78,5 +83,17 @@ public class FavoriteDao extends Dao<Favorite> {
 
     @Override
     public void delete(long e) {
+    }
+
+    public void delete(long accountId, long publicationId) {
+        try (Connection connection = ConnectionManager.get();
+             PreparedStatement statement = connection.prepareStatement(DELETE_BY_ACCOUNT_AND_PUBLICATION_ID_SQL)) {
+            statement.setLong(1, accountId);
+            statement.setLong(2, publicationId);
+
+            statement.executeUpdate();
+        } catch(SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

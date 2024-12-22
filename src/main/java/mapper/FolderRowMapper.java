@@ -25,7 +25,6 @@ public class FolderRowMapper implements RowMapper<Folder>{
                 resultSet.getString("description"),
                 resultSet.getInt("image_amount"),
                 resultSet.getDate("date_created").toLocalDate(),
-                resultSet.getLong("account_id"),
-                new ArrayList<>());
+                resultSet.getLong("account_id"));
     }
 }
