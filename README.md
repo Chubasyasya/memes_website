@@ -28,8 +28,8 @@
 
 1. Клонируй репозиторий:
    ```bash
-   git clone https://github.com/Chubasyasya/website_with_memes
-   cd website_with_memes
+   git clone https://github.com/Chubasyasya/memes_website
+   cd memes_website
 
 
 2. Скопируйте db.properties.example → db.properties и заполните своими данными
