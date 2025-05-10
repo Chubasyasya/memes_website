@@ -24,7 +24,9 @@
             <input type="password" name="password" id="password" placeholder="*********">
 
             <label for="status">Статус</label>
-            <input type="text" name="status" id="status" placeholder="${account.status!"Не указан"}">
+            <input type="text" name="status" id="status" placeholder="${account.status!"Не указан"}" maxlength="100">
+            <span id="statusCounter">0/100</span><br>
+
 
             <label for="birthday">День рождения</label>
             <input type="date" name="birthday" id="birthday" placeholder="${account.birthday!"Не указан"}">

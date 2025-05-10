@@ -1,4 +1,4 @@
-document.getElementById('loginForm').addEventListener('submit', function(event) {
+document.getElementById('input-data-form').addEventListener('submit', function(event) {
     var login = document.getElementById('login').value;
     var password = document.getElementById('password').value;
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;

@@ -30,14 +30,13 @@ public class ExitServlet extends HttpServlet {
 
         Cookie cookie = new Cookie("accountIdentifier", null);
         cookie.setMaxAge(0);
-        cookie.setPath(req.getContextPath());
+        cookie.setPath("/");
         resp.addCookie(cookie);
 
         HttpSession session = req.getSession(false);
         if (session != null) {
             session.invalidate();
         }
-
         resp.sendRedirect(req.getContextPath() + "/login");
     }
 }

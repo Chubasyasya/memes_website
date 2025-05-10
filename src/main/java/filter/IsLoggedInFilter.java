@@ -10,7 +10,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
-@WebFilter("/*")
+@WebFilter({"/exit", "/login", "/profile", "/profile/settings", "/registration", "/comment/react", "/comments",
+        "/comment/create", "/comment/delete", "/addImageToFolder", "/folder/images", "/profile/folders/*",
+        "/profile/folders", "/feed", "/generate-random-meme", "/home"})
 public class IsLoggedInFilter extends HttpFilter{
     @Override
     protected void doFilter(HttpServletRequest req, HttpServletResponse resp, FilterChain chain) throws IOException, ServletException {

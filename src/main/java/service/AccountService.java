@@ -24,6 +24,7 @@ public class AccountService {
     }
 
     public Account find(String login, String password){
+        // Хэширование паролей
         String salt = accountDao.findSalt(login);
         String hashedPassword = PasswordHasher.hashPassword(password, salt);
 
@@ -42,6 +43,7 @@ public class AccountService {
     }
 
     public void save(String login, String password, String name){
+        // Хэширование паролей
         String salt = PasswordHasher.generateSalt();
         String hashedPassword = PasswordHasher.hashPassword(password, salt);
 
@@ -67,6 +69,8 @@ public class AccountService {
         String salt = null;
         String hashedPassword = null;
 
+
+        // Хэширование паролей
         if (newPassword != null) {
             salt = PasswordHasher.generateSalt();
             hashedPassword = PasswordHasher.hashPassword(newPassword, salt);

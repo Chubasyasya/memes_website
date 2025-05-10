@@ -45,26 +45,29 @@ public class LikeServlet extends HttpServlet {
         JSONObject json = new JSONObject(jsonBody.toString());
         long publicationId = StringToLongUtil.getLongParameter(json.getString("publicationId"));
         String action = json.getString("action");
-
+        System.out.println(json);
         Account account = (Account) req.getSession().getAttribute("currentAccount");
 
         int currentLikeCount = publicationService.getLikeCount(publicationId);
         boolean isLiked;
+        System.out.println(currentLikeCount);
 
-        if ("like".equals(action)) {
+        if (!favoriteService.get(account.getId(), publicationId)) {
+            System.out.println("I like post!");
             favoriteService.addToFavorite(account.getId(), publicationId);
             publicationService.addLike(publicationId);
             currentLikeCount++;
             isLiked = true;
-        } else if ("unlike".equals(action)) {
+        } else {
             favoriteService.deleteFromFavorite(account.getId(), publicationId);
             publicationService.deleteLike(publicationId);
             currentLikeCount--;
             isLiked = false;
-        } else {
-            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return;
         }
+//        else {
+//            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+//            return;
+//        }
 
 
         JSONObject responseJson = new JSONObject();

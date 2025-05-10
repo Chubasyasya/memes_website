@@ -1,6 +1,5 @@
 package dao;
 
-import com.oracle.wls.shaded.org.apache.bcel.generic.INSTANCEOF;
 import entity.Favorite;
 import jakarta.ws.rs.DELETE;
 import mapper.FavoriteRowMapper;
@@ -65,6 +64,7 @@ public class FavoriteDao extends Dao<Favorite> {
              PreparedStatement statement = connection.prepareStatement(FIND_BY_ACCOUNT_PUBLICATION_ID_SQL)) {
             statement.setLong(1, accountId);
             statement.setLong(2, publicationId);
+            System.out.println(accountId +" "+ publicationId);
 
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {

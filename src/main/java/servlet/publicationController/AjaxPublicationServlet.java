@@ -3,6 +3,7 @@ package servlet.publicationController;
 import adapter.LocalDateAdapter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import entity.Account;
 import entity.Publication;
 import enums.SortType;
 import freemarker.template.*;
@@ -46,18 +47,29 @@ public class AjaxPublicationServlet extends HttpServlet {
             String searchMask = req.getParameter("search");
 
             try {
-                publications = mainFeed(offset, limit, sort, searchMask);
+                SortType sortType = SortType.DATE_DESC;
+                if(sort!=null) {
+                    sortType = SortType.fromValue(sort);
+                }
+
+                Account account;
+                long id = (account = (Account) req.getSession().getAttribute("currentAccount"))!= null ? account.getId() : -1L;
+                publications = mainFeed(offset, limit, sortType, searchMask, id);
             }catch (IllegalArgumentException e){
                 resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid sort type: " + sort);
                 return;
             }
         }
+        System.out.println("Load publications");
 
         List<String> resultPost = new ArrayList<>();
         for(Publication publication:publications){
             String post = renderPost(publication);
             resultPost.add(post);
         }
+
+
+
 
         Gson gson = new GsonBuilder().registerTypeAdapter(LocalDate.class, new LocalDateAdapter()).create();
         String json = gson.toJson(resultPost);
@@ -66,16 +78,11 @@ public class AjaxPublicationServlet extends HttpServlet {
         resp.getWriter().write(json);
     }
 
-    private List<Publication> mainFeed(int offset, int limit, String sort, String searchMask) throws IllegalArgumentException{
-        SortType sortType = SortType.DATE_DESC;
-        if(sort!=null) {
-            sortType = SortType.fromValue(sort);
-        }
-
+    private List<Publication> mainFeed(int offset, int limit, SortType sortType, String searchMask, long currentAccountId) throws IllegalArgumentException{
         if (searchMask != null && !searchMask.isEmpty()) {
-            return publicationService.getPublicationsByMask(searchMask, offset, limit, sortType);
+            return publicationService.getPublicationsByMask(searchMask, offset, limit, sortType, currentAccountId);
         } else {
-            return publicationService.getPublications(offset, limit, sortType);
+            return publicationService.getPublications(offset, limit, sortType, currentAccountId);
         }
     }
 
@@ -87,6 +94,7 @@ public class AjaxPublicationServlet extends HttpServlet {
         try (Writer writer = new StringWriter()) {
             Configuration cfg = FreemarkerConfigSingleton.getCfg();
             Template template = cfg.getTemplate("renderPost.ftl");
+            System.out.println(publication);
 
             Map<String, Object> model = new HashMap<>();
             model.put("publication", publication);

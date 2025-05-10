@@ -39,6 +39,8 @@
             </form>
         </div>
     </div>
+
+<#--    <script src="${contextPath}/static/js/loginValidation.js"></script>-->
 </#macro>
 
 <@page/>

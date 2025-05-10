@@ -7,8 +7,6 @@ document.addEventListener("DOMContentLoaded", function () {
             const isLiked = likeButton.getAttribute("liked") === "true";
             const action = isLiked ? "unlike" : "like";
 
-            console.log({ publicationId, action });
-
             fetch("/memesWebApp/like-publication", {
                 method: "POST",
                 headers: {
@@ -27,7 +25,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 })
                 .then((data) => {
                     likeButton.setAttribute("liked", data.isLiked ? "true" : "false");
-                    document.getElementById(`like-count-${publicationId}`).textContent = data.likeCount;
+
+                    const likeCountElement = document.getElementById(`like-count-${publicationId}`);
+                    if (likeCountElement) {
+                        likeCountElement.textContent = data.likeCount;
+                    }
                 })
                 .catch((error) => {
                     console.error("Ошибка:", error);

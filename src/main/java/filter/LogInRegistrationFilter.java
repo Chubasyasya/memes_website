@@ -36,8 +36,10 @@ public class LogInRegistrationFilter extends HttpFilter {
             if (account != null) {
                 req.getSession().setAttribute("currentAccount", account);
             }
-            resp.sendRedirect(getServletContext().getContextPath() + "/profile");
-            return;
+            if (!req.getRequestURI().endsWith("/profile")) {
+                resp.sendRedirect(getServletContext().getContextPath() + "/profile");
+                return;
+            }
         }
 
         if(((Account) req.getSession().getAttribute("currentAccount"))!=null){

@@ -43,9 +43,12 @@ public class LoginServlet extends HttpServlet {
         Account account = accountService.find(login, password);
         if(account!= null){
             req.getSession().setAttribute("currentAccount", account);
+            // Использование cookie (запомнить меня как минимум)
             if(rememberMe!=null){
                 String identifier = UUID.randomUUID().toString();
                 Cookie cookie = new Cookie("accountIdentifier", identifier);
+                cookie.setPath("/");
+                cookie.setMaxAge(60 * 60 * 24);
                 accountService.saveIdentifier(account.getId(), identifier);
                 resp.addCookie(cookie);
             }

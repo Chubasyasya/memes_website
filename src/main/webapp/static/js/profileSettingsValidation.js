@@ -32,10 +32,21 @@ document.getElementById('profileForm').addEventListener('submit', function(event
         const alertMessage = document.getElementById('alertMessage');
         alertMessage.textContent = 'Форма не может быть полностью пустой. Пожалуйста, заполните хотя бы одно поле.';
     }else{
-        showAlert('Форма успешно отправлена!', 3000,);
+        showAlert('Форма успешно отправлена!', 6000,);
     }
 
 });
+
+document.addEventListener("DOMContentLoaded", function () {
+    const statusInput = document.getElementById("status");
+    const statusCounter = document.getElementById("statusCounter");
+    const maxLength = 100;
+
+    statusInput.addEventListener("input", function () {
+        const amount = statusInput.value.length;
+        statusCounter.textContent = `${amount}/100`;
+    });
+})
 
 function showAlert(message, duration = 3000) {
     const alertDiv = document.getElementById('alertMessage');

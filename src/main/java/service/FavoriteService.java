@@ -13,4 +13,8 @@ public class FavoriteService {
     public void deleteFromFavorite(long accountId, long publicationId) {
         favoriteDao.delete(accountId, publicationId);
     }
+
+    public boolean get(long id, long publicationId) {
+        return favoriteDao.findByAccountIdPublicationId(id, publicationId);
+    }
 }

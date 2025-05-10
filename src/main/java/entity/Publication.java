@@ -87,5 +87,19 @@ public class Publication {
     public void setLiked(boolean liked) {
         this.liked = liked;
     }
+
+    @Override
+    public String toString() {
+        return "Publication{" +
+               "id=" + id +
+               ", date=" + date +
+               ", content='" + content + '\'' +
+               ", commentsAmount=" + commentsAmount +
+               ", likesAmount=" + likesAmount +
+               ", accountId=" + accountId +
+               ", images=" + images +
+               ", liked=" + liked +
+               '}';
+    }
 }
 

@@ -20,8 +20,8 @@ public class PublicationService {
     }
 
 
-    public List<Publication> getPublications(int offset, int limit, SortType sortType) {
-        return publicationDao.findAll(offset, limit, sortType);
+    public List<Publication> getPublications(int offset, int limit, SortType sortType, long currentAccountId) {
+        return publicationDao.findAll(offset, limit, sortType, currentAccountId);
     }
     public void addLike(long id){
         publicationDao.addLike(id);
@@ -38,8 +38,8 @@ public class PublicationService {
         return publicationDao.find(id);
     }
 
-    public List<Publication> getPublicationsByMask(String mask, int offset, int limit, SortType sortType) {
-        List<Publication> publications = getPublications(offset, limit, sortType);
+    public List<Publication> getPublicationsByMask(String mask, int offset, int limit, SortType sortType, long currentAccountId) {
+        List<Publication> publications = getPublications(offset, limit, sortType, currentAccountId);
         if (mask == null || mask.trim().isEmpty()) {
             return publications;
         }

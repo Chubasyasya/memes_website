@@ -3,6 +3,7 @@ package dao;
 import entity.Publication;
 import enums.SortType;
 import mapper.PublicationRowMapper;
+import mapper.SpecialPublicationRowMapper;
 import util.ConnectionManager;
 
 import java.sql.*;
@@ -53,9 +54,11 @@ public class PublicationDao extends Dao<Publication> {
                 ORDER BY RANDOM() 
                 LIMIT 1;
             """;
+    private SpecialPublicationRowMapper specialMapper;
 
     private PublicationDao() {
         mapper = new PublicationRowMapper();
+        specialMapper = new SpecialPublicationRowMapper();
     }
 
     public static PublicationDao getInstance(){
@@ -159,7 +162,7 @@ public class PublicationDao extends Dao<Publication> {
         }
     }
 
-    public List<Publication> findAll(int offset, int limit, SortType sortType) {
+    public List<Publication> findAll(int offset, int limit, SortType sortType, long currentAccountId) {
         String findSql = FIND_ALL_SQL.formatted(sortType.getField(), sortType.getDirection());
 
         try(Connection connection = ConnectionManager.get();
@@ -170,7 +173,7 @@ public class PublicationDao extends Dao<Publication> {
             List<Publication> publications = new ArrayList<>();
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()){
-                publications.add((Publication) mapper.mapRow(resultSet));
+                publications.add((Publication) specialMapper.mapRow(resultSet, currentAccountId));
             }
 
             return publications;

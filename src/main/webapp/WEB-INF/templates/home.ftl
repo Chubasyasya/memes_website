@@ -64,7 +64,7 @@
     </section>
 
     <footer class="footer">
-        <p>&copy; 2024 Мемосеть. Все права защищены.</p>
+        <p>2024 Мемосеть.</p>
         <form action="${contextPath}/change-background" method="post">
             <label for="background">Выберите фон:</label>
             <select name="background" id="background">

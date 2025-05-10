@@ -21,7 +21,7 @@
     padding: 10px 20px;
     font-size: 16px;
     border: none;
-    background-color: #f3ffcb;
+    background-color: #83a803;
     color: rgb(255, 255, 255);
     cursor: pointer;
     border-radius: 5px;
@@ -29,6 +29,6 @@
 }
 
 #load-more-button:hover {
-    background-color: #f0fad7;
+    background-color: #81b700;
 }
 
